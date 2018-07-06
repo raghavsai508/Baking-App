@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Baking App</string>
+
+    <string name="sample_list_load_error">Error loading one or more samples!</string>
+
+</resources>
