@@ -1,7 +1,10 @@
 package com.example.android.bakingapp;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
+
+import com.example.android.bakingapp.fragments.RecipeFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -9,5 +12,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RecipeFragment recipeFragment = new RecipeFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.recipe_container, recipeFragment)
+                .commit();
+
     }
 }

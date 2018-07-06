@@ -85,7 +85,7 @@ public class Recipe {
         this.mImage = mImage;
     }
 
-    static List<Recipe> getRecipesList(Context context) {
+    public static List<Recipe> getRecipesList(Context context) {
         JsonReader reader;
         ArrayList<Recipe> recipeList = new ArrayList<>();
         try {
@@ -94,6 +94,7 @@ public class Recipe {
             while (reader.hasNext()) {
                 recipeList.add(readRecipeEntry(reader));
             }
+            reader.endArray();
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,7 +150,7 @@ public class Recipe {
             while (reader.hasNext()) {
                 ingredientsList.add(readIngredientEntry(reader));
             }
-            reader.close();
+            reader.endArray();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -157,7 +158,7 @@ public class Recipe {
     }
 
     private static Ingredient readIngredientEntry(JsonReader reader) {
-        int quantity = -1;
+        double quantity = -1;
         String measure = null;
         String ingredient = null;
 
@@ -167,7 +168,7 @@ public class Recipe {
                 String name = reader.nextName();
                 switch (name) {
                     case "quantity":
-                        quantity = reader.nextInt();
+                        quantity = reader.nextDouble();
                         break;
                     case "measure":
                         measure = reader.nextString();
@@ -194,7 +195,7 @@ public class Recipe {
             while (reader.hasNext()) {
                 recipeStepsList.add(readRecipeStepEntry(reader));
             }
-            reader.close();
+            reader.endArray();
         } catch (IOException e) {
             e.printStackTrace();
         }
