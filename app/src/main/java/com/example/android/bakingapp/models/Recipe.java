@@ -85,7 +85,6 @@ public class Recipe {
         this.mImage = mImage;
     }
 
-
     static List<Recipe> getRecipesList(Context context) {
         JsonReader reader;
         ArrayList<Recipe> recipeList = new ArrayList<>();
@@ -103,7 +102,6 @@ public class Recipe {
     }
 
     /* Helper Methods */
-
     private static Recipe readRecipeEntry(JsonReader reader) {
         int recipeId = -1;
         String recipeName = null;
