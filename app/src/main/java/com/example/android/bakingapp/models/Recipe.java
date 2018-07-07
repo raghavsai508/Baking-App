@@ -16,10 +16,11 @@ import com.google.android.exoplayer2.util.Util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Recipe {
+public class Recipe implements Serializable {
 
     private int mRecipeId;
     private String mRecipeName;

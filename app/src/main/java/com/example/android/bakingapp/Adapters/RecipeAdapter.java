@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.Interfaces.RecipeItemClickListener;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Recipe;
 
@@ -19,9 +20,12 @@ import butterknife.ButterKnife;
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
     private List<Recipe> mRecipeList;
+    private RecipeItemClickListener recipeItemClickListener;
 
-    public RecipeAdapter(List<Recipe> recipes) {
+
+    public RecipeAdapter(List<Recipe> recipes, RecipeItemClickListener recipeClickListener) {
         mRecipeList = recipes;
+        recipeItemClickListener = recipeClickListener;
     }
 
 
@@ -44,7 +48,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View mView = layoutInflater.inflate(R.layout.recipe_list_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(mView);
+        final ViewHolder viewHolder = new ViewHolder(mView);
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recipeItemClickListener.onRecipeClick(mRecipeList.get(viewHolder.getAdapterPosition()));
+            }
+        });
         return viewHolder;
     }
 

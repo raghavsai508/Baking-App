@@ -1,6 +1,7 @@
 package com.example.android.bakingapp.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.bakingapp.Adapters.RecipeAdapter;
+import com.example.android.bakingapp.IngredientsActivity;
+import com.example.android.bakingapp.Interfaces.RecipeItemClickListener;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Recipe;
 
@@ -21,6 +24,8 @@ import butterknife.ButterKnife;
 
 
 public class RecipeFragment extends Fragment {
+
+    private static final String INTENT_KEY = "recipe";
 
     private OnFragmentInteractionListener mListener;
     private Context mContext;
@@ -39,7 +44,7 @@ public class RecipeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Context context = getContext();
+        final Context context = getContext();
 
         View rootView = inflater.inflate(R.layout.fragment_recipe, container, false);
         ButterKnife.bind(this, rootView);
@@ -49,7 +54,15 @@ public class RecipeFragment extends Fragment {
         recipeRecyclerView.setLayoutManager(linearLayoutManager);
 
         List<Recipe> recipeList = Recipe.getRecipesList(context);
-        RecipeAdapter recipeAdapter = new RecipeAdapter(recipeList);
+
+        RecipeAdapter recipeAdapter = new RecipeAdapter(recipeList, new RecipeItemClickListener() {
+            @Override
+            public void onRecipeClick(Recipe recipe) {
+                Intent intent = new Intent(context, IngredientsActivity.class);
+                intent.putExtra(INTENT_KEY, recipe);
+                startActivity(intent);
+            }
+        });
 
         recipeRecyclerView.setAdapter(recipeAdapter);
 

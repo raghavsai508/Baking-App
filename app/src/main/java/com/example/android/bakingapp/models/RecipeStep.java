@@ -1,6 +1,8 @@
 package com.example.android.bakingapp.models;
 
-public class RecipeStep {
+import java.io.Serializable;
+
+public class RecipeStep implements Serializable {
     private int mStepId;
     private String mShortDescription;
     private String mDescription;

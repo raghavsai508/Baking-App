@@ -18,6 +18,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .add(R.id.recipe_container, recipeFragment)
                 .commit();
-
     }
+
 }
