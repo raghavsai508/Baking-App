@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.Interfaces.RecipeStepItemClickListener;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.RecipeStep;
 
@@ -17,9 +18,11 @@ import butterknife.ButterKnife;
 
 public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.ViewHolder> {
     private List<RecipeStep> mRecipeSteps;
+    private RecipeStepItemClickListener mRecipeStepItemClickListener;
 
-    public RecipeStepAdapter(List<RecipeStep> recipeSteps) {
+    public RecipeStepAdapter(List<RecipeStep> recipeSteps, RecipeStepItemClickListener ingredientClickListener) {
         mRecipeSteps = recipeSteps;
+        mRecipeStepItemClickListener = ingredientClickListener;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -39,7 +42,13 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Vi
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View mView = layoutInflater.inflate(R.layout.recipe_step_list_item, parent, false);
-        ViewHolder viewHolderStep = new ViewHolder(mView);
+        final ViewHolder viewHolderStep = new ViewHolder(mView);
+        mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRecipeStepItemClickListener.onRecipeStepClick(viewHolderStep.getAdapterPosition());
+            }
+        });
         return viewHolderStep;
     }
 
@@ -53,9 +62,5 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Vi
     public int getItemCount() {
         return mRecipeSteps.size();
     }
-
-
-
-
 
 }
