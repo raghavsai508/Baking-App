@@ -46,6 +46,7 @@ public class RecipeDetailFragment extends Fragment {
     private SimpleExoPlayer mExoPlayer;
     private OnDetailFragmentInteractionListener mListener;
     private RecipeStep recipeStep;
+    private boolean mTwoPane;
 
     @BindView(R.id.exo_player_detail)
     SimpleExoPlayerView exoPlayerView;
@@ -73,7 +74,7 @@ public class RecipeDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-
+        showHidePlayerView();
         mListener.onDetailFragmentInteraction();
         return rootView;
     }
@@ -103,8 +104,19 @@ public class RecipeDetailFragment extends Fragment {
     }
 
 
-    public void setRecipeStepList(List<RecipeStep> recipeStepList) {
+    private void showHidePlayerView() {
+        if (mTwoPane) {
+            exoPlayerImageView.setVisibility(View.INVISIBLE);
+            exoPlayerView.setVisibility(View.VISIBLE);
+        } else {
+            exoPlayerImageView.setVisibility(View.VISIBLE);
+            exoPlayerView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void setRecipeStepList(List<RecipeStep> recipeStepList, boolean mTwoPane) {
         this.recipeStepList = recipeStepList;
+        this.mTwoPane = mTwoPane;
     }
 
     public void refreshToPosition(int position) {
@@ -149,7 +161,5 @@ public class RecipeDetailFragment extends Fragment {
     public interface OnDetailFragmentInteractionListener {
         void onDetailFragmentInteraction();
     }
-
-
 
 }

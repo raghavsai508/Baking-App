@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop" >
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,14 +23,30 @@
         </activity>
         <activity
             android:name=".IngredientsActivity"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
-            android:name=".RecipeDetailActivity" />
-        <activity android:name=".PlayerActivity" />
+            android:name=".RecipeDetailActivity"
+            android:parentActivityName=".IngredientsActivity"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".IngredientsActivity" />
+        </activity>
+        <activity android:name=".PlayerActivity"
+            android:parentActivityName=".RecipeDetailActivity"
+            android:launchMode="singleTop"
+            android:configChanges="orientation|screenSize" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".RecipeDetailActivity" />
+        </activity>
     </application>
 
 </manifest>

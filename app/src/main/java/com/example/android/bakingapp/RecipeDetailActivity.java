@@ -36,7 +36,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
 
         recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setRecipeStepList(recipeStepList);
+        recipeDetailFragment.setRecipeStepList(recipeStepList, false);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .add(R.id.detail_recipe_container, recipeDetailFragment)

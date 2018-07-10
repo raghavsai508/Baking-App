@@ -52,7 +52,6 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
                 .commit();
     }
 
-
     @Override
     public void recipeStepClickAt(int position) {
         if (mTwoPane) {
@@ -70,12 +69,13 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
     private void setupTabletLayout() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setRecipeStepList(recipe.getmRecipeSteps());
+        recipeDetailFragment.setRecipeStepList(recipe.getmRecipeSteps(), true);
         fragmentManager.beginTransaction()
                 .add(R.id.detail_recipe_container, recipeDetailFragment)
                 .commit();
     }
 
+    
     @Override
     public void onDetailFragmentInteraction() {
         recipeDetailFragment.refreshToPosition(0);
