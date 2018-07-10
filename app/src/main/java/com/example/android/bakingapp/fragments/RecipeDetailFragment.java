@@ -2,6 +2,7 @@ package com.example.android.bakingapp.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,8 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.bakingapp.PlayerActivity;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.RecipeStep;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -30,18 +33,25 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class RecipeDetailFragment extends Fragment {
 
+    private static final String VIDEO_URL_KEY = "video_url";
+
     private List<RecipeStep> recipeStepList;
     private SimpleExoPlayer mExoPlayer;
     private OnDetailFragmentInteractionListener mListener;
+    private RecipeStep recipeStep;
 
     @BindView(R.id.exo_player_detail)
     SimpleExoPlayerView exoPlayerView;
+
+    @BindView(R.id.exo_player_image_View)
+    ImageView exoPlayerImageView;
 
     @BindView(R.id.tv_description)
     TextView textViewDescription;
@@ -98,11 +108,18 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     public void refreshToPosition(int position) {
-        RecipeStep recipeStep = recipeStepList.get(position);
+        recipeStep = recipeStepList.get(position);
         initializePlayer(Uri.parse(recipeStep.getmVideoURL()));
         textViewDescription.setText(recipeStep.getmDescription());
     }
 
+
+    @OnClick(R.id.exo_player_image_View)
+    public void showPlayerActivity(View view) {
+        Intent intent = new Intent(getContext(), PlayerActivity.class);
+        intent.putExtra(VIDEO_URL_KEY, recipeStep.getmVideoURL());
+        startActivity(intent);
+    }
 
     private void initializePlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
