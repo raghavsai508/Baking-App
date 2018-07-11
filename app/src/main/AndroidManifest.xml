@@ -13,8 +13,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,30 +23,41 @@
         </activity>
         <activity
             android:name=".IngredientsActivity"
-            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
         <activity
             android:name=".RecipeDetailActivity"
-            android:parentActivityName=".IngredientsActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize" >
+            android:parentActivityName=".IngredientsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".IngredientsActivity" />
         </activity>
-        <activity android:name=".PlayerActivity"
-            android:parentActivityName=".RecipeDetailActivity"
+        <activity
+            android:name=".PlayerActivity"
+            android:configChanges="orientation|screenSize"
             android:launchMode="singleTop"
-            android:configChanges="orientation|screenSize" >
+            android:parentActivityName=".RecipeDetailActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".RecipeDetailActivity" />
         </activity>
+
+        <receiver android:name=".RecipeWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recipe_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>

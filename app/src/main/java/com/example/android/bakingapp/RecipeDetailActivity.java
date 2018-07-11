@@ -29,11 +29,14 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         if (intentCalled != null) {
             if (intentCalled.getBundleExtra("extra") != null) {
                 Bundle bundle = intentCalled.getBundleExtra("extra");
-                recipeStepList = (ArrayList<RecipeStep>)bundle.getSerializable(INTENT_KEY_RECIPE_STEPS);
+                try {
+                    recipeStepList = (ArrayList<RecipeStep>)bundle.getSerializable(INTENT_KEY_RECIPE_STEPS);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 stepPosition = bundle.getInt(INTENT_KEY_RECIPE_STEP_POSITION);
             }
         }
-
 
         recipeDetailFragment = new RecipeDetailFragment();
         recipeDetailFragment.setRecipeStepList(recipeStepList, false);
@@ -41,9 +44,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         fragmentManager.beginTransaction()
                 .add(R.id.detail_recipe_container, recipeDetailFragment)
                 .commit();
-
     }
-
 
     @Override
     public void onDetailFragmentInteraction() {
