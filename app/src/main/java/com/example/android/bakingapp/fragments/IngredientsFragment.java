@@ -1,6 +1,8 @@
 package com.example.android.bakingapp.fragments;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import com.example.android.bakingapp.Interfaces.RecipeStepItemClickListener;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Ingredient;
 import com.example.android.bakingapp.models.Recipe;
+import com.example.android.bakingapp.widget.RecipeWidgetProvider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,7 +64,7 @@ public class IngredientsFragment extends Fragment {
 
         setupIngredients();
         setupRecyclerView(context);
-
+        setupAppWidget();
         return rootView;
     }
 
@@ -85,6 +88,13 @@ public class IngredientsFragment extends Fragment {
             }
         });
         recyclerViewRecipeSteps.setAdapter(recipeStepAdapter);
+    }
+
+    private void setupAppWidget() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getContext(), RecipeWidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
+        RecipeWidgetProvider.updateRecipeWidget(getContext(), appWidgetManager, recipe, appWidgetIds);
     }
 
 }

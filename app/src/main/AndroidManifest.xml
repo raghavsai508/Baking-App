@@ -49,7 +49,7 @@
                 android:value=".RecipeDetailActivity" />
         </activity>
 
-        <receiver android:name=".RecipeWidgetProvider">
+        <receiver android:name=".widget.RecipeWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -58,6 +58,11 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/recipe_widget_provider_info" />
         </receiver>
+
+        <service
+            android:name=".widget.WidgetListService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
+
     </application>
 
 </manifest>
