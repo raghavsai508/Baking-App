@@ -7,7 +7,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Recipe Fragment Fields -->
-    <string name="ingredients_required">Required Ingredients: </string>
+    <string name="ingredients_required">Required Ingredients: %1$d</string>
 
     <!-- Recipe Detail Fragment Fields -->
     <string name="btn_previous">Previous</string>

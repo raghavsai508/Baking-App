@@ -1,11 +1,11 @@
 package com.example.android.bakingapp.Adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.bakingapp.Interfaces.RecipeItemClickListener;
@@ -19,11 +19,13 @@ import butterknife.ButterKnife;
 
 public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
 
+    private Context mContext;
     private List<Recipe> mRecipeList;
     private RecipeItemClickListener recipeItemClickListener;
 
 
-    public RecipeAdapter(List<Recipe> recipes, RecipeItemClickListener recipeClickListener) {
+    public RecipeAdapter(Context context, List<Recipe> recipes, RecipeItemClickListener recipeClickListener) {
+        mContext = context;
         mRecipeList = recipes;
         recipeItemClickListener = recipeClickListener;
     }
@@ -34,8 +36,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         @BindView(R.id.tv_recipe_name)
         TextView textViewRecipeName;
 
-        @BindView(R.id.iv_recipe)
-        ImageView imageViewRecipe;
+        @BindView(R.id.tv_ingredients_required)
+        TextView textViewIngredientsRequired;
 
         public ViewHolder(View view) {
             super(view);
@@ -62,6 +64,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Recipe recipe = mRecipeList.get(position);
         holder.textViewRecipeName.setText(recipe.getmRecipeName());
+        holder.textViewIngredientsRequired.setText(mContext.getString(R.string.ingredients_required, recipe.getmIngredients().size()));
     }
 
     @Override

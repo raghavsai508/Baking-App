@@ -101,7 +101,7 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
             return;
         }
 
-        RecipeAdapter recipeAdapter = new RecipeAdapter(recipeList, new RecipeItemClickListener() {
+        RecipeAdapter recipeAdapter = new RecipeAdapter(getContext(), recipeList, new RecipeItemClickListener() {
             @Override
             public void onRecipeClick(Recipe recipe) {
                 Intent intent = new Intent(getContext(), IngredientsActivity.class);
