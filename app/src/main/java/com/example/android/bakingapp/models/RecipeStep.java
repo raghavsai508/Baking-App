@@ -1,13 +1,18 @@
 package com.example.android.bakingapp.models;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class RecipeStep implements Serializable {
+public class RecipeStep implements Parcelable {
     private int mStepId;
     private String mShortDescription;
     private String mDescription;
     private String mVideoURL;
     private String mThumbnailURL;
+
+    public RecipeStep() {
+
+    }
 
     public RecipeStep(int stepId, String shortDescription, String description, String videoURL, String thumbnailURL) {
         mStepId = stepId;
@@ -16,6 +21,41 @@ public class RecipeStep implements Serializable {
         mVideoURL = videoURL;
         mThumbnailURL = thumbnailURL;
     }
+
+    protected RecipeStep(Parcel in) {
+        mStepId = in.readInt();
+        mShortDescription = in.readString();
+        mDescription = in.readString();
+        mVideoURL = in.readString();
+        mThumbnailURL = in.readString();
+    }
+
+    public static final Creator<RecipeStep> CREATOR = new Creator<RecipeStep>() {
+        @Override
+        public RecipeStep createFromParcel(Parcel in) {
+            return new RecipeStep(in);
+        }
+
+        @Override
+        public RecipeStep[] newArray(int size) {
+            return new RecipeStep[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mStepId);
+        dest.writeString(mShortDescription);
+        dest.writeString(mDescription);
+        dest.writeString(mVideoURL);
+        dest.writeString(mThumbnailURL);
+    }
+
 
     public int getmStepId() {
         return mStepId;
@@ -56,4 +96,6 @@ public class RecipeStep implements Serializable {
     public void setmThumbnailURL(String mThumbnailURL) {
         this.mThumbnailURL = mThumbnailURL;
     }
+
+
 }

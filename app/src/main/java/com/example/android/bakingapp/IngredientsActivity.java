@@ -30,7 +30,7 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
         Intent intentCalled = getIntent();
         if (intentCalled != null) {
             if (intentCalled.hasExtra(INTENT_KEY)) {
-                recipe = (Recipe) intentCalled.getSerializableExtra(INTENT_KEY);
+                recipe = intentCalled.getParcelableExtra(INTENT_KEY);
             }
         }
 

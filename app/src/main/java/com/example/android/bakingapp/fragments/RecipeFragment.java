@@ -10,28 +10,38 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.android.bakingapp.Adapters.RecipeAdapter;
 import com.example.android.bakingapp.IngredientsActivity;
 import com.example.android.bakingapp.Interfaces.RecipeItemClickListener;
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Recipe;
+import com.example.android.bakingapp.network.RecipeLoaderCallbacks;
+import com.example.android.bakingapp.utils.JsonUtils;
+import com.example.android.bakingapp.utils.NetworkUtility;
 
+import java.net.URL;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class RecipeFragment extends Fragment {
+public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.RecipesLoaderListener {
 
     private static final String INTENT_KEY = "recipe";
+    private static final int ID_RECIPE_FRAGMENT_LOADER = 123;
 
     private OnFragmentInteractionListener mListener;
     private Context mContext;
+    private List<Recipe> recipeList;
 
     @BindView(R.id.recipe_recycler_view)
     RecyclerView recipeRecyclerView;
+
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
 
 
     public RecipeFragment() {
@@ -53,19 +63,7 @@ public class RecipeFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recipeRecyclerView.setLayoutManager(linearLayoutManager);
 
-        List<Recipe> recipeList = Recipe.getRecipesList(context);
-
-        RecipeAdapter recipeAdapter = new RecipeAdapter(recipeList, new RecipeItemClickListener() {
-            @Override
-            public void onRecipeClick(Recipe recipe) {
-                Intent intent = new Intent(context, IngredientsActivity.class);
-                intent.putExtra(INTENT_KEY, recipe);
-                startActivity(intent);
-            }
-        });
-
-        recipeRecyclerView.setAdapter(recipeAdapter);
-
+        getRecipes();
         return rootView;
     }
 
@@ -87,6 +85,53 @@ public class RecipeFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
+    private void getRecipes() {
+        URL recipesURL = NetworkUtility.buildRecipesUrl();
+        RecipeLoaderCallbacks recipeLoaderCallbacks = new RecipeLoaderCallbacks(getContext(), recipesURL, this);
+        try {
+            getActivity().getSupportLoaderManager().initLoader(ID_RECIPE_FRAGMENT_LOADER, null, recipeLoaderCallbacks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadRecipes() {
+        if (recipeList == null) {
+            return;
+        }
+
+        RecipeAdapter recipeAdapter = new RecipeAdapter(recipeList, new RecipeItemClickListener() {
+            @Override
+            public void onRecipeClick(Recipe recipe) {
+                Intent intent = new Intent(getContext(), IngredientsActivity.class);
+                intent.putExtra(INTENT_KEY, recipe);
+                startActivity(intent);
+            }
+        });
+
+        recipeRecyclerView.setAdapter(recipeAdapter);
+    }
+
+    // region RecipesLoaderListener methods
+    @Override
+    public void onPreExecute() {
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPostExecute(String jsonString) {
+        mProgressBar.setVisibility(View.INVISIBLE);
+        try {
+            getActivity().getSupportLoaderManager().destroyLoader(ID_RECIPE_FRAGMENT_LOADER);
+            recipeList = JsonUtils.getRecipeslistFromJSONString(jsonString);
+            loadRecipes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    // endregion
+
 
     /**
      * This interface must be implemented by activities that contain this

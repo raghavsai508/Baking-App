@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.android.bakingapp.fragments.RecipeDetailFragment;
 import com.example.android.bakingapp.models.RecipeStep;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailFragment.OnDetailFragmentInteractionListener {
@@ -30,7 +29,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             if (intentCalled.getBundleExtra("extra") != null) {
                 Bundle bundle = intentCalled.getBundleExtra("extra");
                 try {
-                    recipeStepList = (ArrayList<RecipeStep>)bundle.getSerializable(INTENT_KEY_RECIPE_STEPS);
+                    recipeStepList = bundle.getParcelableArrayList(INTENT_KEY_RECIPE_STEPS);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
