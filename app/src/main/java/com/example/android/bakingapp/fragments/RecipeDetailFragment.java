@@ -3,6 +3,7 @@ package com.example.android.bakingapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -58,11 +59,11 @@ public class RecipeDetailFragment extends Fragment {
     @BindView(R.id.exo_player_image_view)
     ImageView exoPlayerImageView;
 
-    @BindView(R.id.exo_player_image_view_card_view)
-    CardView exoPlayerImageViewCardView;
-
     @BindView(R.id.tv_description)
     TextView textViewDescription;
+
+    @BindView(R.id.tv_no_video)
+    TextView textViewNoVideo;
 
     @BindView(R.id.btn_next)
     Button btnNext;
@@ -82,6 +83,7 @@ public class RecipeDetailFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         showHidePlayerView();
+        showNavigationButtons();
         mListener.onDetailFragmentInteraction();
         return rootView;
     }
@@ -109,13 +111,23 @@ public class RecipeDetailFragment extends Fragment {
         mListener = null;
     }
 
+    private void showNavigationButtons() {
+        if (mTwoPane) {
+            btnPrevious.setVisibility(View.INVISIBLE);
+            btnNext.setVisibility(View.INVISIBLE);
+        } else {
+            btnPrevious.setVisibility(View.VISIBLE);
+            btnNext.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void showHidePlayerView() {
         if (mTwoPane) {
-            exoPlayerImageViewCardView.setVisibility(View.INVISIBLE);
-            exoPlayerDetailCardView.setVisibility(View.VISIBLE);
+            exoPlayerImageView.setVisibility(View.INVISIBLE);
+            exoPlayerView.setVisibility(View.VISIBLE);
         } else {
-            exoPlayerImageViewCardView.setVisibility(View.VISIBLE);
-            exoPlayerDetailCardView.setVisibility(View.INVISIBLE);
+            exoPlayerImageView.setVisibility(View.VISIBLE);
+            exoPlayerView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -127,18 +139,7 @@ public class RecipeDetailFragment extends Fragment {
     public void refreshToPosition(int position) {
         recipeStep = recipeStepList.get(position);
         refreshNavigationButtons(position);
-        String videoURL = recipeStep.getmVideoURL();
-
-        if(mTwoPane) {
-            initializePlayer(Uri.parse(recipeStep.getmVideoURL()));
-        } else {
-            if (!videoURL.equals("")) {
-                exoPlayerImageViewCardView.setVisibility(View.VISIBLE);
-            } else {
-                exoPlayerImageViewCardView.setVisibility(View.INVISIBLE);
-            }
-        }
-
+        initializePlayer(Uri.parse(recipeStep.getmVideoURL()));
         textViewDescription.setText(recipeStep.getmDescription());
     }
 
@@ -190,6 +191,30 @@ public class RecipeDetailFragment extends Fragment {
     }
 
     private void initializePlayer(Uri mediaUri) {
+
+        if (mediaUri == null || mediaUri.toString().equals("")) {
+            textViewNoVideo.setVisibility(View.VISIBLE);
+            textViewNoVideo.bringToFront();
+            textViewNoVideo.setTextColor(Color.rgb(0,0,0));
+            exoPlayerImageView.setVisibility(View.INVISIBLE);
+            exoPlayerView.setVisibility(View.INVISIBLE);
+            return;
+        } else {
+            textViewNoVideo.setVisibility(View.INVISIBLE);
+            if (mTwoPane) {
+                exoPlayerImageView.setVisibility(View.INVISIBLE);
+                exoPlayerView.setVisibility(View.VISIBLE);
+            } else {
+                exoPlayerImageView.setVisibility(View.VISIBLE);
+                exoPlayerView.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        if (!mTwoPane) {
+            return;
+        }
+
+
         if (mExoPlayer == null) {
             // Create an instance of the ExoPlayer.
             TrackSelector trackSelector = new DefaultTrackSelector();

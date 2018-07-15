@@ -71,7 +71,13 @@ public class IngredientsFragment extends Fragment {
     private void setupIngredients() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Ingredient ingredient: recipe.getmIngredients()) {
-            stringBuilder.append(ingredient.getmIngredient()+" "+ingredient.getmMeasure()+" "+ingredient.getmQuantity()+"\n");
+            stringBuilder.append(ingredient.getmIngredient());
+            stringBuilder.append(": ");
+            stringBuilder.append(ingredient.getmQuantity());
+            stringBuilder.append(" ");
+            stringBuilder.append(ingredient.getmMeasure());
+            stringBuilder.append(" ");
+            stringBuilder.append("\n");
         }
         textViewIngredients.setText(stringBuilder);
     }
