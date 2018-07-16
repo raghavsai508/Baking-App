@@ -30,26 +30,27 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
         Intent intentCalled = getIntent();
         if (intentCalled != null) {
             if (intentCalled.hasExtra(INTENT_KEY)) {
+
                 recipe = intentCalled.getParcelableExtra(INTENT_KEY);
-            }
-        }
 
-        if (findViewById(R.id.tablet_layout) != null) {
-            mTwoPane = true;
-            if (savedInstanceState == null) {
-                setupTabletLayout();
             }
-        } else {
-            mTwoPane = false;
-        }
+            if (findViewById(R.id.tablet_layout) != null) {
+                mTwoPane = true;
+                if (savedInstanceState == null) {
+                    setupTabletLayout();
+                }
+            } else {
+                mTwoPane = false;
+            }
 
-        IngredientsFragment ingredientsFragment = new IngredientsFragment();
-        ingredientsFragment.setRecipe(recipe);
-        ingredientsFragment.setIngFragmentRecipeStepClickListener(this);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.ingredients_container, ingredientsFragment)
-                .commit();
+            IngredientsFragment ingredientsFragment = new IngredientsFragment();
+            ingredientsFragment.setRecipe(recipe);
+            ingredientsFragment.setIngFragmentRecipeStepClickListener(this);
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .add(R.id.ingredients_container, ingredientsFragment)
+                    .commit();
+        }
     }
 
     @Override

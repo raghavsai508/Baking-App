@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
+import android.support.test.espresso.IdlingResource;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.android.bakingapp.Adapters.RecipeAdapter;
+import com.example.android.bakingapp.IdlingResource.SimpleIdlingResource;
 import com.example.android.bakingapp.IngredientsActivity;
 import com.example.android.bakingapp.Interfaces.RecipeItemClickListener;
 import com.example.android.bakingapp.R;
@@ -33,6 +38,9 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
     private static final String INTENT_KEY = "recipe";
     private static final int ID_RECIPE_FRAGMENT_LOADER = 123;
 
+    @Nullable
+    private SimpleIdlingResource mIdlingResource;
+
     private OnFragmentInteractionListener mListener;
     private Context mContext;
     private List<Recipe> recipeList;
@@ -42,6 +50,16 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
 
     @BindView(R.id.progressBar)
     ProgressBar mProgressBar;
+
+
+    @VisibleForTesting
+    @NonNull
+    public IdlingResource getIdlingResource() {
+        if (mIdlingResource == null) {
+            mIdlingResource = new SimpleIdlingResource();
+        }
+        return mIdlingResource;
+    }
 
 
     public RecipeFragment() {
@@ -63,7 +81,9 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         recipeRecyclerView.setLayoutManager(linearLayoutManager);
 
+        getIdlingResource();
         getRecipes();
+
         return rootView;
     }
 
@@ -116,6 +136,9 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
     // region RecipesLoaderListener methods
     @Override
     public void onPreExecute() {
+        if (mIdlingResource != null) {
+            mIdlingResource.setIdleState(false);
+        }
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
@@ -126,6 +149,7 @@ public class RecipeFragment extends Fragment implements RecipeLoaderCallbacks.Re
             getActivity().getSupportLoaderManager().destroyLoader(ID_RECIPE_FRAGMENT_LOADER);
             recipeList = JsonUtils.getRecipeslistFromJSONString(jsonString);
             loadRecipes();
+            mIdlingResource.setIdleState(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
