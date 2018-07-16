@@ -49,15 +49,7 @@ public class RecipesActivityTest {
     }
 
     @Test
-    public void idlingResourceTest() {
-//        onData(anything()).inAdapterView(withId(R.id.recipe_recycler_view)).atPosition(0).perform(click());
-//        onView(new RecyclerViewMatcher());
-//        Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        Intent intent = new Intent(targetContext, IngredientsActivity.class);
-//        List<Recipe> recipeList = RecipeHelper.getRecipesList(targetContext);
-//        intent.putExtra("recipe", recipeList.get(0));
-//        intentsTestRule.launchActivity(intent);
-
+    public void idlingResourceRecyclerViewTest() {
         onView(ViewMatchers.withId(R.id.recipe_recycler_view)).perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
         intended(hasComponent(IngredientsActivity.class.getName()));
     }

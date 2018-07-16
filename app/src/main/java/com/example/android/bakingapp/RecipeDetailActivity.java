@@ -14,6 +14,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     private static final String INTENT_KEY_RECIPE_STEPS = "recipe_steps";
     private static final String INTENT_KEY_RECIPE_STEP_POSITION = "recipe_step_position";
+    private static final String INTENT_BUNDLE_RECIPE_EXTRA = "extra";
+
 
     private List<RecipeStep> recipeStepList;
     private RecipeDetailFragment recipeDetailFragment;
@@ -26,8 +28,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         Intent intentCalled = getIntent();
         if (intentCalled != null) {
-            if (intentCalled.getBundleExtra("extra") != null) {
-                Bundle bundle = intentCalled.getBundleExtra("extra");
+            if (intentCalled.getBundleExtra(INTENT_BUNDLE_RECIPE_EXTRA) != null) {
+                Bundle bundle = intentCalled.getBundleExtra(INTENT_BUNDLE_RECIPE_EXTRA);
                 try {
                     recipeStepList = bundle.getParcelableArrayList(INTENT_KEY_RECIPE_STEPS);
                 } catch (Exception ex) {

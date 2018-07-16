@@ -17,6 +17,7 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
     private static final String INTENT_KEY = "recipe";
     private static final String INTENT_KEY_RECIPE_STEPS = "recipe_steps";
     private static final String INTENT_KEY_RECIPE_STEP_POSITION = "recipe_step_position";
+    private static final String INTENT_BUNDLE_RECIPE_EXTRA = "extra";
 
     private Recipe recipe;
     private RecipeDetailFragment recipeDetailFragment;
@@ -30,9 +31,7 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
         Intent intentCalled = getIntent();
         if (intentCalled != null) {
             if (intentCalled.hasExtra(INTENT_KEY)) {
-
                 recipe = intentCalled.getParcelableExtra(INTENT_KEY);
-
             }
             if (findViewById(R.id.tablet_layout) != null) {
                 mTwoPane = true;
@@ -48,7 +47,7 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
             ingredientsFragment.setIngFragmentRecipeStepClickListener(this);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .add(R.id.ingredients_container, ingredientsFragment)
+                    .add(R.id.ingredients_container, ingredientsFragment, IngredientsFragment.class.getSimpleName())
                     .commit();
         }
     }
@@ -60,9 +59,9 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
         } else {
             Intent intent = new Intent(this, RecipeDetailActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putSerializable(INTENT_KEY_RECIPE_STEPS, (ArrayList<RecipeStep>)recipe.getmRecipeSteps());
+            bundle.putParcelableArrayList(INTENT_KEY_RECIPE_STEPS, (ArrayList<RecipeStep>)recipe.getmRecipeSteps());
             bundle.putInt(INTENT_KEY_RECIPE_STEP_POSITION, position);
-            intent.putExtra("extra", bundle);
+            intent.putExtra(INTENT_BUNDLE_RECIPE_EXTRA, bundle);
             startActivity(intent);
         }
     }
