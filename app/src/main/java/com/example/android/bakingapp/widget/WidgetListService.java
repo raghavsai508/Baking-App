@@ -2,11 +2,14 @@ package com.example.android.bakingapp.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Ingredient;
+import com.example.android.bakingapp.models.Recipe;
+import com.google.gson.Gson;
 
 import java.util.List;
 
@@ -22,12 +25,24 @@ class WidgetListFactory implements RemoteViewsService.RemoteViewsFactory {
 
     private Context mContext;
     private List<Ingredient> ingredientList;
+    private Recipe recipeSelected;
+
+    private static final String PREFERENCE_RECIPE_KEY = "recipe_widget";
+
 
     public WidgetListFactory(Context context) {
         mContext = context;
 
-        if (RecipeWidgetProvider.recipeSelected != null) {
-            ingredientList = RecipeWidgetProvider.recipeSelected.getmIngredients();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.app_name), Context.MODE_PRIVATE);
+        String recipeJson = sharedPreferences.getString(PREFERENCE_RECIPE_KEY, null);
+        recipeSelected = null;
+        if (recipeJson != null) {
+            Gson gson = new Gson();
+            recipeSelected = gson.fromJson(recipeJson, Recipe.class);
+        }
+
+        if (recipeSelected != null) {
+            ingredientList = recipeSelected.getmIngredients();
         }
     }
 
@@ -38,8 +53,8 @@ class WidgetListFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onDataSetChanged() {
-        if (RecipeWidgetProvider.recipeSelected != null) {
-            ingredientList = RecipeWidgetProvider.recipeSelected.getmIngredients();
+        if (recipeSelected != null) {
+            ingredientList = recipeSelected.getmIngredients();
         } else {
             ingredientList = null;
         }
@@ -52,6 +67,9 @@ class WidgetListFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public int getCount() {
+        if (ingredientList == null) {
+            return 0;
+        }
         return ingredientList.size();
     }
 

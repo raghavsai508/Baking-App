@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -44,11 +46,17 @@ public class RecipeDetailFragment extends Fragment {
 
     private static final String VIDEO_URL_KEY = "video_url";
 
+    private static final String PLAYER_POSITION = "player_position";
+    private static final String PLAYER_STATE = "player_state";
+    private static final String RECIPE_STEP_POSITION = "STEP_POSITION";
+
     private List<RecipeStep> recipeStepList;
     private SimpleExoPlayer mExoPlayer;
     private OnDetailFragmentInteractionListener mListener;
     private RecipeStep recipeStep;
     private boolean mTwoPane;
+    private long playerPosition;
+    private boolean getPlayerWhenReady;
 
     @BindView(R.id.exo_player_detail)
     SimpleExoPlayerView exoPlayerView;
@@ -82,16 +90,63 @@ public class RecipeDetailFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         ButterKnife.bind(this, rootView);
 
-        showHidePlayerView();
-        showNavigationButtons();
-        mListener.onDetailFragmentInteraction();
+        // Tablet layout condition
+        if (mTwoPane) {
+            if (savedInstanceState == null) {
+                resetPlayerData();
+            } else {
+                playerPosition = savedInstanceState.getLong(PLAYER_POSITION, 0);
+                getPlayerWhenReady = savedInstanceState.getBoolean(PLAYER_STATE, true);
+            }
+        }
+
+        if (savedInstanceState == null) {
+            mListener.onDetailFragmentInteraction();
+        } else {
+            int position = savedInstanceState.getInt(RECIPE_STEP_POSITION,0);
+            loadToPosition(position);
+        }
+
         return rootView;
+    }
+
+    public void resetPlayerData() {
+        playerPosition = 0;
+        getPlayerWhenReady = true; // By default will play
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(RECIPE_STEP_POSITION, recipeStep.getmStepId());
+        if (mTwoPane) {
+            playerPosition = mExoPlayer.getCurrentPosition();
+            getPlayerWhenReady = mExoPlayer.getPlayWhenReady();
+            outState.putLong(PLAYER_POSITION, playerPosition);
+            outState.putBoolean(PLAYER_STATE, getPlayerWhenReady);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
     @Override
@@ -126,6 +181,13 @@ public class RecipeDetailFragment extends Fragment {
             exoPlayerImageView.setVisibility(View.INVISIBLE);
             exoPlayerView.setVisibility(View.VISIBLE);
         } else {
+            if (recipeStep.getmThumbnailURL() != null) {
+                Picasso.get().
+                        load(Uri.parse(recipeStep.getmThumbnailURL()))
+                        .placeholder(android.R.drawable.ic_media_play)
+                        .error(android.R.drawable.ic_media_play)
+                        .into(exoPlayerImageView);
+            }
             exoPlayerImageView.setVisibility(View.VISIBLE);
             exoPlayerView.setVisibility(View.INVISIBLE);
         }
@@ -134,14 +196,27 @@ public class RecipeDetailFragment extends Fragment {
     public void setRecipeStepList(List<RecipeStep> recipeStepList, boolean mTwoPane) {
         this.recipeStepList = recipeStepList;
         this.mTwoPane = mTwoPane;
+        if (this.mTwoPane) {
+            resetPlayerData();
+        }
     }
 
     public void refreshToPosition(int position) {
+        playerPosition = 0;
+        getPlayerWhenReady = true;
+        loadToPosition(position);
+    }
+
+    private void loadToPosition(int position) {
         recipeStep = recipeStepList.get(position);
+        showHidePlayerView();
+        showNavigationButtons();
         refreshNavigationButtons(position);
         initializePlayer(Uri.parse(recipeStep.getmVideoURL()));
         textViewDescription.setText(recipeStep.getmDescription());
     }
+
+
 
     public void refreshNavigationButtons(int currentPosition) {
         if (mTwoPane) {
@@ -229,7 +304,8 @@ public class RecipeDetailFragment extends Fragment {
         MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                 getContext(), userAgent), new DefaultExtractorsFactory(), null, null);
         mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(true);
+        mExoPlayer.seekTo(playerPosition);
+        mExoPlayer.setPlayWhenReady(getPlayerWhenReady);
     }
 
     private void releasePlayer() {

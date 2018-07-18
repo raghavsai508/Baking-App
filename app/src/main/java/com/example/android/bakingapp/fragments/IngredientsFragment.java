@@ -4,6 +4,7 @@ package com.example.android.bakingapp.fragments;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import com.example.android.bakingapp.R;
 import com.example.android.bakingapp.models.Ingredient;
 import com.example.android.bakingapp.models.Recipe;
 import com.example.android.bakingapp.widget.RecipeWidgetProvider;
+import com.google.gson.Gson;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +34,7 @@ public class IngredientsFragment extends Fragment {
         void recipeStepClickAt(int position);
     }
 
+    private static final String PREFERENCE_RECIPE_KEY = "recipe_widget";
 
     private Recipe recipe;
     private IngFragmentRecipeStepClickListener ingFragmentRecipeStepClickListener;
@@ -68,6 +71,8 @@ public class IngredientsFragment extends Fragment {
         return rootView;
     }
 
+
+
     private void setupIngredients() {
         StringBuilder stringBuilder = new StringBuilder();
         for (Ingredient ingredient: recipe.getmIngredients()) {
@@ -97,10 +102,18 @@ public class IngredientsFragment extends Fragment {
     }
 
     private void setupAppWidget() {
+
+        SharedPreferences.Editor sharedPreferencesEdit = getContext().getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE).edit();
+        Gson gson = new Gson();
+        String recipeJson = gson.toJson(recipe);
+        sharedPreferencesEdit.putString(PREFERENCE_RECIPE_KEY,recipeJson);
+        sharedPreferencesEdit.apply();
+
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getContext());
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(getContext(), RecipeWidgetProvider.class));
+        RecipeWidgetProvider.updateRecipeWidget(getContext(), appWidgetManager, appWidgetIds);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_list_view);
-        RecipeWidgetProvider.updateRecipeWidget(getContext(), appWidgetManager, recipe, appWidgetIds);
+
     }
 
 }

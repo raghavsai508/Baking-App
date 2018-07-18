@@ -39,12 +39,18 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             }
         }
 
-        recipeDetailFragment = new RecipeDetailFragment();
-        recipeDetailFragment.setRecipeStepList(recipeStepList, false);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.detail_recipe_container, recipeDetailFragment)
-                .commit();
+
+        recipeDetailFragment = (RecipeDetailFragment) fragmentManager.findFragmentByTag(RecipeDetailFragment.class.getSimpleName());
+        if (recipeDetailFragment == null) {
+            recipeDetailFragment = new RecipeDetailFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.detail_recipe_container, recipeDetailFragment, RecipeDetailFragment.class.getSimpleName())
+                    .commit();
+        }
+
+        recipeDetailFragment.setRecipeStepList(recipeStepList, false);
+
     }
 
     @Override

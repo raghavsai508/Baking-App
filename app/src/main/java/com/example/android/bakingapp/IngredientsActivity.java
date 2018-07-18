@@ -1,6 +1,7 @@
 package com.example.android.bakingapp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,21 +36,31 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
             }
             if (findViewById(R.id.tablet_layout) != null) {
                 mTwoPane = true;
-                if (savedInstanceState == null) {
-                    setupTabletLayout();
-                }
+                setupTabletLayout();
+//                if (savedInstanceState == null) {
+//                    setupTabletLayout();
+//                }
             } else {
                 mTwoPane = false;
             }
 
-            IngredientsFragment ingredientsFragment = new IngredientsFragment();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            IngredientsFragment ingredientsFragment = (IngredientsFragment) fragmentManager.findFragmentByTag(IngredientsFragment.class.getSimpleName());
+            if (ingredientsFragment == null) {
+                ingredientsFragment = new IngredientsFragment();
+                fragmentManager.beginTransaction()
+                        .add(R.id.ingredients_container, ingredientsFragment, IngredientsFragment.class.getSimpleName())
+                        .commit();
+            }
             ingredientsFragment.setRecipe(recipe);
             ingredientsFragment.setIngFragmentRecipeStepClickListener(this);
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .add(R.id.ingredients_container, ingredientsFragment, IngredientsFragment.class.getSimpleName())
-                    .commit();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
     }
 
     @Override
@@ -68,11 +79,14 @@ public class IngredientsActivity extends AppCompatActivity implements Ingredient
 
     private void setupTabletLayout() {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        recipeDetailFragment = new RecipeDetailFragment();
+        recipeDetailFragment = (RecipeDetailFragment) fragmentManager.findFragmentByTag(RecipeDetailFragment.class.getSimpleName());
+        if (recipeDetailFragment == null) {
+            recipeDetailFragment = new RecipeDetailFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.detail_recipe_container, recipeDetailFragment, RecipeDetailFragment.class.getSimpleName())
+                    .commit();
+        }
         recipeDetailFragment.setRecipeStepList(recipe.getmRecipeSteps(), true);
-        fragmentManager.beginTransaction()
-                .add(R.id.detail_recipe_container, recipeDetailFragment)
-                .commit();
     }
 
     

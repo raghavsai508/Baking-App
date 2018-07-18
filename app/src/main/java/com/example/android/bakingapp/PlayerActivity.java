@@ -24,8 +24,12 @@ import butterknife.ButterKnife;
 public class PlayerActivity extends AppCompatActivity {
 
     private static final String VIDEO_URL_KEY = "video_url";
+    private static final String PLAYER_POSITION = "player_position";
+    private static final String PLAYER_STATE = "player_state";
 
     private SimpleExoPlayer mExoPlayer;
+    private long playerPosition;
+    private boolean getPlayerWhenReady;
 
     @BindView(R.id.exo_player_activity)
     SimpleExoPlayerView exoPlayerView;
@@ -36,17 +40,52 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
         ButterKnife.bind(this);
 
+        if (savedInstanceState == null) {
+            playerPosition = 0;
+            getPlayerWhenReady = true; // By default will play
+        } else {
+            playerPosition = savedInstanceState.getLong(PLAYER_POSITION, 0);
+            getPlayerWhenReady = savedInstanceState.getBoolean(PLAYER_STATE, true);
+        }
+
         Intent intentCalled = getIntent();
         if (intentCalled != null && intentCalled.hasExtra(VIDEO_URL_KEY)) {
             String url = intentCalled.getStringExtra(VIDEO_URL_KEY);
             initializePlayer(Uri.parse(url));
         }
+
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        playerPosition = mExoPlayer.getCurrentPosition();
+        getPlayerWhenReady = mExoPlayer.getPlayWhenReady();
+        outState.putLong(PLAYER_POSITION, playerPosition);
+        outState.putBoolean(PLAYER_STATE, getPlayerWhenReady);
+    }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         releasePlayer();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
     }
 
     private void initializePlayer(Uri mediaUri) {
@@ -64,12 +103,15 @@ public class PlayerActivity extends AppCompatActivity {
         MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                 this, userAgent), new DefaultExtractorsFactory(), null, null);
         mExoPlayer.prepare(mediaSource);
-        mExoPlayer.setPlayWhenReady(true);
+        mExoPlayer.seekTo(playerPosition);
+        mExoPlayer.setPlayWhenReady(getPlayerWhenReady);
     }
 
     private void releasePlayer() {
-        mExoPlayer.stop();
-        mExoPlayer.release();
-        mExoPlayer = null;
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
     }
 }

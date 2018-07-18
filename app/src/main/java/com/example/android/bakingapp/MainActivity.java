@@ -13,11 +13,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecipeFragment recipeFragment = new RecipeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.recipe_container, recipeFragment, RecipeFragment.class.getSimpleName())
-                .commit();
+        RecipeFragment recipeFragment = (RecipeFragment) fragmentManager.findFragmentByTag(RecipeFragment.class.getSimpleName());
+        if (recipeFragment == null) {
+            recipeFragment = new RecipeFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.recipe_container, recipeFragment, RecipeFragment.class.getSimpleName())
+                    .commit();
+        }
     }
-
 }
